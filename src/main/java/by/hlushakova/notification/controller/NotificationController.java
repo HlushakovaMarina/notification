@@ -1,6 +1,8 @@
 package by.hlushakova.notification.controller;
 
+import by.hlushakova.notification.service.NotificationManagerService;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,11 +16,18 @@ import java.util.Map;
 @RequestMapping("/api/notifications")
 public class NotificationController {
 
+    private final NotificationManagerService notificationManagerService;
+
+    @Autowired
+    public NotificationController(NotificationManagerService notificationManagerService) {
+        this.notificationManagerService = notificationManagerService;
+    }
+
     @PostMapping("/email")
     public ResponseEntity<Map<String, String>> sendEmailNotification(
             @RequestBody Map<String, String> request){
         String message = request.get("message");
-        notificationManagerServise.sendEmailNotification(message);
+        notificationManagerService.sendEmailNotification(message);
 
         Map<String, String> response = new HashMap<>();
         response.put("status", "success");
@@ -32,7 +41,7 @@ public class NotificationController {
     public ResponseEntity<Map<String, String>> sendSmsNotification(
             @RequestBody Map<String, String> request){
         String message = request.get("message");
-        notificationManagerServise.sendEmailNotification(message);
+        notificationManagerService.sendSmsNotification(message);
 
         Map<String, String> response = new HashMap<>();
         response.put("status", "success");
@@ -42,11 +51,25 @@ public class NotificationController {
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping("/push")
+    public ResponseEntity<Map<String, String>> sendPushNotification(
+            @RequestBody Map<String, String> request){
+        String message = request.get("message");
+        notificationManagerService.sendPushNotification(message);
+
+        Map<String, String> response = new HashMap<>();
+        response.put("status", "success");
+        response.put("type", "push");
+        response.put("message", "Push notification sent");
+
+        return ResponseEntity.ok(response);
+    }
+
     @PostMapping("/all")
     public ResponseEntity<Map<String, String>> sendNotificationToAll(
             @RequestBody Map<String, String> request){
         String message = request.get("message");
-        notificationManagerServise.sendEmailNotification(message);
+        notificationManagerService.sendNotificationToAll(message);
 
         Map<String, String> response = new HashMap<>();
         response.put("status", "success");
@@ -61,7 +84,7 @@ public class NotificationController {
             @PathVariable String serviceType,
             @RequestBody Map<String, String> request){
         String message = request.get("message");
-        notificationManagerServise.sendEmailNotification(message);
+        notificationManagerService.sendNotificationByType(serviceType, message);
 
         Map<String, String> response = new HashMap<>();
         response.put("status", "success");
