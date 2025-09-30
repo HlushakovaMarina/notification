@@ -1,8 +1,10 @@
 package by.hlushakova.notification.controller;
 
+import by.hlushakova.notification.dto.FarmResponse;
 import by.hlushakova.notification.service.NotificationManagerService;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -92,5 +94,24 @@ public class NotificationController {
         response.put("message", "Notification sent to " + serviceType);
 
         return ResponseEntity.ok(response);
+    }
+    @PostMapping("/create-farm")
+    public ResponseEntity<FarmResponse> createFarm(@RequestBody Map<String, String> request) {
+        try {
+            String farmName = request.get("farmName");
+            String location = request.get("location");
+            String notificationMessage = request.get("notificationMessage");
+
+            if (farmName == null || location == null || notificationMessage == null) {
+                System.err.println("Ошибка: Не все необходимые параметры переданы.");
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+            FarmResponse farmResponse = notificationManagerService.createFarmAndNotify(farmName, location, notificationMessage);
+            return new ResponseEntity<>(farmResponse, HttpStatus.OK);
+
+        } catch (Exception e) {
+            System.err.println("Ошибка при создании фермы и отправке уведомления: " + e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }
