@@ -45,4 +45,8 @@ public class FarmApiClient {
             throw new RuntimeException("Failed to create farm", error);
         }
    }
+    public FarmResponse createFruit(FarmRequest farmRequest){
+
+    }
+
 }

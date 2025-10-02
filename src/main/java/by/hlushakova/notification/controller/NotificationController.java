@@ -106,7 +106,13 @@ public class NotificationController {
                 System.err.println("Ошибка: Не все необходимые параметры переданы.");
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
-            FarmResponse farmResponse = notificationManagerService.createFarmAndNotify(farmName, location, notificationMessage);
+            FarmResponse farmResponse = notificationManagerService.createFarmAndNotify(farmName,
+                    location, notificationMessage);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", "success");
+            response.put("message", "Farm created and notification sent");
+            response.put("farm", farmResponse);
             return new ResponseEntity<>(farmResponse, HttpStatus.OK);
 
         } catch (Exception e) {
